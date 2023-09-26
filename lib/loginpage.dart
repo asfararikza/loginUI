@@ -1,7 +1,40 @@
+import 'dart:html';
+
 import 'package:flutter/material.dart';
 
-class LoginPage extends StatelessWidget {
-  const LoginPage({super.key});
+// ignore: must_be_immutable
+class LoginPage extends StatefulWidget {
+  LoginPage({super.key});
+
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  String username = "";
+  String password = "";
+
+  bool isLogin = false;
+  bool isPasswordVisible = false;
+
+  late TextEditingController usernameController;
+  late TextEditingController passwordController;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    usernameController = TextEditingController();
+    passwordController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    usernameController.dispose();
+    passwordController.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,6 +81,10 @@ class LoginPage extends StatelessWidget {
                     height: 20,
                   ),
                   TextField(
+                    // onChanged: (value) {
+                    //   username = value;
+                    // },
+                    controller: usernameController,
                     decoration: InputDecoration(
                         labelText: 'Email',
                         border: OutlineInputBorder(
@@ -55,13 +92,31 @@ class LoginPage extends StatelessWidget {
                                 BorderRadius.all(Radius.circular(30)))),
                   ),
                   SizedBox(height: 20),
-                  TextField(
-                    obscureText: true,
+                  TextFormField(
+                    // onChanged: (value) {
+                    //   password = value;
+                    // },
+                    controller: passwordController,
+                    keyboardType: TextInputType.visiblePassword,
+                    obscureText: isPasswordVisible,
+
                     decoration: InputDecoration(
                         labelText: 'Password',
                         border: OutlineInputBorder(
                             borderRadius:
-                                BorderRadius.all(Radius.circular(30)))),
+                                BorderRadius.all(Radius.circular(30))),
+                        suffixIcon: Padding(
+                          padding: EdgeInsets.only(right: 8),
+                          child: IconButton(
+                              onPressed: () {
+                                setState(() {
+                                  isPasswordVisible = !isPasswordVisible;
+                                });
+                              },
+                              icon: (isPasswordVisible)
+                                  ? Icon(Icons.visibility_off)
+                                  : Icon(Icons.visibility)),
+                        )),
                   ),
                   SizedBox(height: 10),
                   Container(
@@ -122,12 +177,32 @@ class LoginPage extends StatelessWidget {
                     color: Colors.teal,
                     borderRadius: BorderRadius.circular(30)),
                 child: TextButton(
+                  // onPressed: () {
+                  //   SnackBar snackBar = SnackBar(
+                  //     content: Text("Sign In Success"),
+                  //   );
+                  //   ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                  // },
                   onPressed: () {
+                    String text = "";
+                    username = usernameController.text;
+                    password = passwordController.text;
+
+                    if (username == "flutterMobile" &&
+                        password == "flutter123") {
+                      text = "Login Success";
+                      isLogin = true;
+                    } else {
+                      text = "Login Failed";
+                      isLogin = false;
+                    }
                     SnackBar snackBar = SnackBar(
-                      content: Text("Sign In Success"),
+                      content: Text(text),
+                      backgroundColor: (isLogin) ? Colors.green : Colors.red,
                     );
                     ScaffoldMessenger.of(context).showSnackBar(snackBar);
                   },
+
                   child: const Text(
                     "Sign In",
                     style: TextStyle(color: Colors.white, fontSize: 18),
